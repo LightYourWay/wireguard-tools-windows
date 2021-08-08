@@ -13,7 +13,7 @@ jobs:
       - name: create build directory
         run: mkdir build
       - name: compile binary for windows
-        run: deno compile --allow-read --allow-run --allow-env --target x86_64-pc-windows-msvc --output ./build/wg-quick ./src/wg-quick.ts
+        run: deno compile --allow-read --allow-write --allow-run --allow-env --unstable --target x86_64-pc-windows-msvc --output ./build/wg-quick ./src/wg-quick.ts
       - uses: actions/upload-artifact@v2
         with:
           name: wg-quick
