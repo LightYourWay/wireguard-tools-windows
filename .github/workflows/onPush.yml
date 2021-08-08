@@ -14,4 +14,7 @@ jobs:
         run: mkdir build
       - name: compile binary for windows
         run: deno compile --allow-read --allow-run --allow-env --target x86_64-pc-windows-msvc --output ./build/wg-quick ./src/wg-quick.ts
-        path: build/wg-quick.exe
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build/
