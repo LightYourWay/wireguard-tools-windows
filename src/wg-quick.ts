@@ -1,10 +1,30 @@
 import { elevate } from "./modules/elevation.ts";
 import { getConfigs, toggleConfig, getConfigByName } from "./modules/wireguard.ts";
 import { promt, printConfigs, Sleep } from "./modules/ux.ts";
+import { isInPath, createPath, copyToPath, removePath, appendToSystemPath, removeFromSystemPath } from "./modules/install.ts";
 
-const isValidInput = Deno.args.length == 2 && (Deno.args[0].toLowerCase() == "up" || Deno.args[0].toLowerCase() == "down")
+const installTools = (Deno.args[0] == "--install" || Deno.args[0] == "-i")
+const uninstallTools = (Deno.args[0] == "--uninstall" || Deno.args[0] == "-u")
+const installPath = Deno.args[1] || `C:\\Program Files\\wireguard-tools`
 
-if (Deno.args[0] && !isValidInput) {
+if (Deno.args[0] && installTools && !await isInPath(installPath)) {
+	await elevate();
+	await createPath(installPath);
+	await copyToPath(installPath);
+	await appendToSystemPath(installPath);
+	Deno.exit(0)
+}
+
+if (Deno.args[0] && uninstallTools && await isInPath(installPath)) {
+	await elevate();
+	await removePath(installPath);
+	await removeFromSystemPath(installPath);
+	Deno.exit(0)
+}
+
+const directAction = Deno.args.length == 2 && (Deno.args[0].toLowerCase() == "up" || Deno.args[0].toLowerCase() == "down")
+
+if (Deno.args[0] && !directAction) {
 	console.log(`---\n>>> Arguments could not be parsed. Tool expects something like "wg-quick up vpn-name".\n---`)
 	Deno.exit(1);
 }
