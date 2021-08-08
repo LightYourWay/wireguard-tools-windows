@@ -1,0 +1,20 @@
+name: build-for-windows
+on: [push]
+jobs:
+  builds-for-windows:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: clone repository
+        uses: actions/checkout@v2
+      - name: setup Deno
+        uses: denoland/setup-deno@v1.1.0
+        with:
+          deno-version: canary
+      - name: create build directory
+        run: mkdir build
+      - name: compile binary for windows
+        run: deno compile --allow-read --allow-run --allow-env --target x86_64-pc-windows-msvc --output ./build/wg-quick ./src/wg-quick.ts
+      - uses: actions/upload-artifact@v2
+        with:
+          name: wg-quick
+          path: build/wg-quick.exe
